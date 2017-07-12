@@ -3,11 +3,20 @@
 
 #making generic moves
 class Move
-  attr_accessor :name, :dmg, :type
+  attr_accessor :name, :dmg, :type, :pp
 
-  def initialize (name, dmg, type)
+  def initialize (name, dmg, type, pp)
     @name = name
     @dmg = dmg
     @type = type
+    @pp = pp
   end
+end
+
+def randSpecialMove(size)
+
+end 
+
+#Creates a hash of all 4 moves for a Pokemon Object
+def createMoveset
 end
