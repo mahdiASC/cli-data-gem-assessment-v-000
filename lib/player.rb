@@ -1,0 +1,4 @@
+class Player
+    @roster = []
+    
+end
