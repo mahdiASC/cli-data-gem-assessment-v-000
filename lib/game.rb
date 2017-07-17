@@ -224,11 +224,21 @@ class Game
       if @enemy.currentPokemon.alive?
         enemyTurn
       end
-    elsif @player.currentPokemon.spd>@enemy.currentPokemon.spd
+    elsif @player.currentPokemon.spd<@enemy.currentPokemon.spd
       enemyTurn
       if @player.currentPokemon.alive?
         playerTurn
       end
+    end
+
+    #switch if any dead and player still has usable pokemon
+    if !@player.currentPokemon.alive? && !@player.allDead?
+      puts "Your #{@player.currentPokemon.name.capitalize} has fainted!"
+      playerSwitch  
+    end
+    if @enemy.currentPokemon.alive? && !@enemy.allDead?
+      puts "Enemy #{@enemy.currentPokemon.name.capitalize} has fainted!"
+      @enemy.switch
     end
   end
 
@@ -261,6 +271,9 @@ class Game
     until @player.valids.include?(@player.roster[userInput.to_i-1]) && userInput != "0" do
       showPlayerSwitchRoster
       userInput = gets.strip
+      if !@player.valids.include?(@player.roster[userInput.to_i-1])
+        invalid
+      end
     end
     if @player.currentPokemon
       puts "#{@player.currentPokemon.name.capitalize} returns!"
@@ -270,9 +283,15 @@ class Game
   end
 
   def showPlayerSwitchRoster
+    maxLength = @player.roster.sort{|a,b| a.name.length<=>b.name.length}.last.name.length+2
+
     @player.roster.each_index{|i|
       health = @player.roster[i].alive? ? @player.roster[i].hp.to_s + " HP" : "FAINTED!"
-      puts "#{i+1}. #{@player.roster[i].name} STATUS: #{health}"
+      text = "#{i+1}. #{@player.roster[i].name.capitalize}"
+      until text.length >= maxLength do
+        text = text + " "
+      end
+      puts "#{text}| STATUS: #{health}"
     }
     sepLine
   end
@@ -299,7 +318,7 @@ class Game
   end
 
   def enemyTurn
-    @enemy.currentPokemon.attacks(@player.currentPokmeon)
+    puts "Enemy #{@enemy.currentPokemon.name.capitalize} attacks your #{@player.currentPokemon.name.capitalize} for #{@enemy.currentPokemon.attacks(@player.currentPokemon, @enemy.currentPokemon.moves.sample)} damage!"
   end
 
   def restart

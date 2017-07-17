@@ -1,7 +1,5 @@
 require './basePlayer.rb'
 class Player < BasePlayer
-    attr_accessor :roster, :currentPokemon
-
     def initialize
         @roster = []
     end

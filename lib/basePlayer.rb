@@ -1,7 +1,7 @@
 class BasePlayer
     attr_accessor :roster, :currentPokemon
 
-     def allDead?
+    def allDead?
         # returns true if no more pokemon left to play
         !@roster.any?{|pokemon| pokemon.alive?}
     end
