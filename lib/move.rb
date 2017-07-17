@@ -1,22 +1,18 @@
 # Damage Calculation
-# https://bulbapedia.bulbagarden.net/wiki/Damage
+# https://www.serebii.net/games/damage.shtml
 
-#making generic moves
 class Move
   attr_accessor :name, :dmg, :type, :pp
 
   def initialize (name, dmg, type, pp)
-    @name = name
+    @name = "#{name} (#{type})"
     @dmg = dmg
     @type = type
     @pp = pp
   end
-end
 
-def randSpecialMove(size)
-
-end 
-
-#Creates a hash of all 4 moves for a Pokemon Object
-def createMoveset
+  def usable?
+    #returns true if move has enough PP to be used
+    @pp>0
+  end
 end

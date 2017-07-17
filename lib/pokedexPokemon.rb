@@ -8,6 +8,7 @@ class PokedexPokemon
 
   def clone
     # creates a copy of this pokedexPokemon object as a pokemon object
-    return Pokemon.new([@name, @type1, @type2, @hp, @att, @def, @spAtt, @spDef, @spd])
+    # moves is an array of moves
+    return Pokemon.new([@name, @type1, @type2, @hp.to_i, @att.to_i, @def.to_i, @spAtt.to_i, @spDef.to_i, @spd.to_i])
   end
 end
