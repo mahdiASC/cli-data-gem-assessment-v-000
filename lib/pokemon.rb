@@ -12,7 +12,8 @@ class Pokemon
 
   def attacks(oppPokemon, move)
     #simplified dmg calculations
-    oppPokemon.hp -= @att
+    oppPokemon.hp -= move.dmg
+    move.dmg
   end
 
   def canAttack?
