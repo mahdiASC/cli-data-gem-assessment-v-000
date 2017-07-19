@@ -11,9 +11,30 @@ class Pokemon
   end
 
   def attacks(oppPokemon, move)
-    #simplified dmg calculations
-    oppPokemon.hp -= move.dmg
-    move.dmg
+    #dmg calculations
+    attackStat = move.type == "Normal" ? @att : @spAtt
+    attackPower = move.dmg
+    defenseStat = move.type == "Normal" ? oppPokemon.def : oppPokemon.spDef
+    randNum = rand(15)+85
+    stab = move.type == @type1 || move.type == @type2 ? 1.5 : 1
+    weakResist = calcWeakResist(oppPokemon,move)
+
+    damageTotal = ((((42 * attackStat * (attackPower/defenseStat))/50)+2)*stab*weakResist*randNum/100).ceil
+
+    # Damage applied
+    move.pp -= 1
+    oppPokemon.hp -= damageTotal
+    if oppPokemon.hp < 0
+      oppPokemon.hp = 0 #just in case HP checked
+    end
+    damageTotal
+  end
+
+  def calcWeakResist(oppPokemon,move)
+    #returns multiplier for attack effectiveness
+    #0.25, 0.5, 1, 2, or 4
+    # http://imgur.com/DLuksLi
+
   end
 
   def canAttack?

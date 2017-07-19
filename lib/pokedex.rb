@@ -24,7 +24,15 @@ class Pokedex
   end
 
   def bestSix
-    @pokeList.sort{|pokemonA,pokemonB| pokemonB.totalStats <=> pokemonA.totalStats}.take(6)
+    @pokeList.sort{|pokemonA,pokemonB| pokemonB.totalStats <=> pokemonA.totalStats}.take(6).map{|pokemon|pokemon.clone}
+  end
+
+  def randSix
+    randArray = []
+    6.times do
+      randArray.push(@pokeList.sample.clone)
+    end
+    randArray
   end
 
   def searchName(word)

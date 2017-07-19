@@ -27,13 +27,11 @@ require "./player.rb"
 require './move.rb'
 
 class Game
-  attr_accessor :player, :enemy, :pokedex
+  attr_accessor :player, :enemy, :pokedex, :difficulty
 
   def initialize
     @player = Player.new()
     @pokedex = Pokedex.new()
-    @enemy = Enemy.new(@pokedex.bestSix.map{|pokedexPokemon| pokedexPokemon.clone})
-    fillMoves(@enemy)
     #OMIT#
     @player.roster = @pokedex.bestSix.map{|pokedexPokemon| pokedexPokemon.clone}
     fillMoves(@player)
@@ -41,6 +39,7 @@ class Game
 
   def start
     intro
+    difficulty
     pokedexSelection
     beginFight
     declareWinner
@@ -58,7 +57,25 @@ class Game
     puts 'Good luck, and have fun!'
   end
   
-  def fillMoves(char)
+  def difficulty
+    #Sets difficulty of Enemy AI
+    userInput = ""
+    choices = ['e','h','easy','hard']
+    until choices.include?(userInput) do
+      puts "Select Difficulty: (e)asy (h)ard"
+      userInput = gets.strip.downcase
+    end
+    @difficulty = userInput
+    if userInput == "e" || userInput == "easy"
+      @enemy = Enemy.new(@pokedex.randSix)
+      fillMoves(@enemy, "easy")
+    elsif userInput == "h" || userInput == "hard"
+      @enemy = Enemy.new(@pokedex.bestSix)
+      fillMoves(@enemy, "hard")
+    end
+  end
+
+  def fillMoves(char, diff=nil)
     #fills char's pokemon roster with appropriate moves
     #moves are different for enemy
     if char.is_a?(Player)
@@ -71,14 +88,25 @@ class Game
         pokemon.moves = output
       }
     else
-      char.roster.each{|pokemon|
-        output=[]
-        output.push(Move.new("Normal Attack",40,"Normal",30))
-        output.push(Move.new("Big Normal Attack",100,"Normal",10))
-        output.push(Move.new("Special Attack",65,pokemon.type1,20))
-        output.push(Move.new("Big Special Attack",90,pokemon.type1,5))
-        pokemon.moves = output
-      }
+      if diff == "easy"
+        char.roster.each{|pokemon|
+          output = []
+          output.push(Move.new("Normal Attack",randAtt(45),"Normal",30))
+          output.push(Move.new("Big Normal Attack",randAtt(110),"Normal",10))
+          output.push(Move.new("Special Attack",randAtt(70),randType,20))
+          output.push(Move.new("Big Special Attack",randAtt(100),randType,5))
+          pokemon.moves = output
+        }
+      elsif diff == "hard"
+        char.roster.each{|pokemon|
+          output=[]
+          output.push(Move.new("Normal Attack",40,"Normal",30))
+          output.push(Move.new("Big Normal Attack",100,"Normal",10))
+          output.push(Move.new("Special Attack",65,pokemon.type1,20))
+          output.push(Move.new("Big Special Attack",90,pokemon.type1,5))
+          pokemon.moves = output
+        }
+      end
     end
 
   end
@@ -246,25 +274,29 @@ class Game
     end
 
     #switch if any dead and player still has usable pokemon
-    if !@player.currentPokemon.alive? && !@player.allDead?
+    if !@player.currentPokemon.alive?
       puts "Your #{@player.currentPokemon.name.capitalize} has fainted!"
       playerSwitch  
     end
-    if !@enemy.currentPokemon.alive? && !@enemy.allDead?
+    if !@enemy.currentPokemon.alive?
       puts "Enemy #{@enemy.currentPokemon.name.capitalize} has fainted!"
       @enemy.switch
+      puts "Enemy brings out a #{@enemy.currentPokemon.name.capitalize}!"
     end
 
-    currentStatus
+    if !gameWon?
+      currentStatus
+    end
   end
 
   def playerTurn
-    puts "Your turn! Current Pokemon: #{@player.currentPokemon.name.capitalize} HP:#{@player.currentPokemon.hp}"
+    puts "###Player Turn###"
+    puts "Current Pokemon: #{@player.currentPokemon.name.capitalize} HP:#{@player.currentPokemon.hp}"
     puts "What would you like to do? (a)ttack (s)witch"
     userInput = ""
     choices = ["a","attack","s","switch"]
     until choices.include?(userInput) do
-      userInput = gets.strip
+      userInput = gets.strip.downcase
       if (userInput == "s" || userInput == "switch")
         playerSwitch
       elsif(userInput == "a" || userInput == "attack")
@@ -273,6 +305,7 @@ class Game
         invalid
       end
     end
+    sepLine
   end
 
   def playerSwitch
@@ -321,9 +354,14 @@ class Game
       # binding.pry #OMIT#
       until availMoves.include?(@player.currentPokemon.moves[userInput.to_i-1]) && userInput!="0" do
         puts "Which move should #{@player.currentPokemon.name.capitalize} use?"
+        maxLength = @player.currentPokemon.moves.sort{|a,b| a.name.length<=>b.name.length}.last.name.length+5
         @player.currentPokemon.moves.each_index{|i|
           move = @player.currentPokemon.moves[i]
-          puts "#{i+1}. #{move.name.upcase} > PP: #{move.pp}"
+          text = "#{i+1}. #{move.name.upcase}"
+          until text.length >= maxLength do
+            text = text + " "
+          end
+          puts "#{text} > PP: #{move.pp}"
         }
         userInput = gets.strip
         if !availMoves.include?(@player.currentPokemon.moves[userInput.to_i-1]) && userInput!="0"
@@ -339,14 +377,16 @@ class Game
   end
 
   def enemyTurn
+    puts "###Enemy Turn###"
     if @enemy.currentPokemon.canAttack?
-      puts "Enemy #{@enemy.currentPokemon.name.capitalize} attacks your #{@player.currentPokemon.name.capitalize} for #{@enemy.currentPokemon.attacks(@player.currentPokemon, @enemy.currentPokemon.moves.sample)} damage!"
+      puts "Enemy #{@enemy.currentPokemon.name.capitalize} attacks your #{@player.currentPokemon.name.capitalize} for #{@enemy.attacks(@player.currentPokemon,@difficulty)} damage!"
       # puts "Current player pokemon HP is #{@player.currentPokemon.hp}"
     else 
       #current pokemon is out of PP for all moves, defaults to "Struggle"
       struggle = Move.new("Struggle",40,"Normal",99)
-      puts "Enemy #{@enemy.currentPokemon.name.capitalize} is out of moves! It uses Struggle to attack your #{@player.currentPokemon.name.capitalize} for #{@player.currentPokemon.attacks(@player.currentPokemon,struggle)} damage!"
+      puts "Enemy #{@enemy.currentPokemon.name.capitalize} is out of moves! It uses Struggle to attack your #{@player.currentPokemon.name.capitalize} for #{@enemy.attacks(@player.currentPokemon, @difficulty, struggle)} damage!"
     end
+    sepLine
   end
 
   def currentStatus
@@ -355,13 +395,18 @@ class Game
     puts "Enemy #{@enemy.currentPokemon.name.capitalize} has #{@enemy.currentPokemon.hp} HP"
     sepLine
   end
+
+  def gameWon?
+    @enemy.allDead? || @player.allDead?
+  end
+
   def restart
     sepLine
     puts "Would you like to play again? (y)es (n)o"
     choices = ["y","n","yes","no"]
     userInput = ''
     until choices.include?(userInput) do
-      userInput = gets.strip
+      userInput = gets.strip.downcase
     end
 
     if(userInput == "y" || userInput == "yes")
