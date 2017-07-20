@@ -13,13 +13,16 @@ class Enemy < BasePlayer
     def attacks(oppPokemon, diff, move=nil)
         #determines how enemy AI attacks depending on difficulty
         if move
-            @currentPokemon.attacks(oppPokemon, move)
+            dmg = @currentPokemon.attacks(oppPokemon, move)
         else
             if diff == "easy"
-                @currentPokemon.attacks(oppPokemon, @currentPokemon.usableMoves.sample)
+                move = @currentPokemon.usableMoves.sample
+                dmg = @currentPokemon.attacks(oppPokemon, move)
             elsif diff == "hard"
-                @currentPokemon.attacks(oppPokemon, @currentPokemon.usableMoves.sort{|moveA,moveB| moveA.dmg<=>moveB.dmg}.last)
+                move = @currentPokemon.usableMoves.sort{|moveA,moveB| moveA.dmg<=>moveB.dmg}.last
+                dmg = @currentPokemon.attacks(oppPokemon, move)
             end
         end
+        [dmg, move]
     end
 end

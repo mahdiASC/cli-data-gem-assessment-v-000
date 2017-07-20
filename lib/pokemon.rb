@@ -27,78 +27,106 @@ class Pokemon
     if oppPokemon.hp < 0
       oppPokemon.hp = 0 #just in case HP checked
     end
-    damageTotal
+    [damageTotal,weakResist]
   end
 
   def calcWeakResist(oppPokemon,move, type=@type1)
     #returns multiplier for attack effectiveness
     #0.25, 0.5, 1, 2, or 4
-    # http://imgur.com/DLuksLi
+    # http://unrealitymag.com/wp-content/uploads/2014/11/rby-rules.jpg
     output = 1; #number returned as modifier
     case move.type
     when 'Normal'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Ghost'].include?(type)
+        output *= 0
       end
     when 'Bug'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Fire','Flying',"Rock"].include?(type)
+        output*=0.5
+      elsif ['Grass','Poison',"Psychic"].include?(type)
+        output*=2
       end
     when 'Dragon'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
-      end
+      #No effectiveness
     when 'Ice'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Ice','Water'].include?(type)
+        output*=0.5
+      elsif ['Dragon','Flying','Grass','Ground'].include?(type)
+        output*=2
       end
     when 'Fighting'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Flying','Psychic'].include?(type)
+        output*=0.5
+      elsif ['Ice','Normal','Rock'].include?(type)
+        output*=2
+      elsif ['Ghost'].include?(type)
+        output*=0
       end
     when 'Fire'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Rock','Water'].include?(type)
+        output*=0.5
+      elsif ['Bug','Grass','Ice'].include?(type)
+        output*=2
       end
     when 'Flying'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Electric','Rock'].include?(type)
+        output*=0.5
+      elsif ['Bug','Fighting',"Grass"].include?(type)
+        output*=2
       end
     when 'Grass'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Bug','Fire','Flying','Grass','Poison'].include?(type)
+        output*=0.5
+      elsif ['Ground','Rock','Water'].include?(type)
+        output*=2
       end
     when 'Ghost'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Normal','Psychic'].include?(type)
+        output*=0
       end
     when 'Ground'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Grass'].include?(type)
+        output*=0.5
+      elsif ['Electric','Fire','Poison','Rock'].include?(type)
+        output*=2
+      elsif ['Flying'].include?(type)
+        output*=0
       end
     when 'Electric'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Electric','Grass'].include?(type)
+        output*=0.5
+      elsif ['Flying','Water'].include?(type)
+        output*=2
+      elsif ['Ground'].include?(type)
+        output*=0
       end
     when 'Poison'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Ground','Poison','Rock'].include?(type)
+        output*=0.5
+      elsif ['Bug','Grass'].include?(type)
+        output*=2
       end
     when 'Psychic'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Psychic'].include?(type)
+        output*=0.5
+      elsif ['Fighting','Poison'].include?(type)
+        output*=2
       end
     when 'Rock'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Fighting','Rock'].include?(type)
+      elsif ['Bug','Fire','Flying','Ice'].include?(type)
       end
     when 'Water'
-      if ['',''].include?(type)
-      elsif ['',''].include?(type)
+      if ['Grass','Ice'].include?(type)
+        output*=0.5
+      elsif ['Fire','Ground','Rock'].include?(type)
+        output*=2
       end
     else
       puts "SOMETHING WENT WRONG WITH TYPE DMG"
-
+      puts "Move: #{move} Type: #{type}"
+    end
+    
     if(type2!='')
       output *= calcWeakResist(oppPokemon,move, @type2)
     end

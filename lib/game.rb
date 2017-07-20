@@ -206,7 +206,7 @@ class Game
   end
 
   def beginFight
-    puts "\'Poorly Designed Boss\' has appeared!"
+    puts "\'Poorly Designed Boss\' wants to battle!"
     displayBothRosters
     playerSwitch
     until @player.allDead? || @enemy.allDead? do
@@ -275,13 +275,13 @@ class Game
 
     #switch if any dead and player still has usable pokemon
     if !@player.currentPokemon.alive?
-      puts "Your #{@player.currentPokemon.name.capitalize} has fainted!"
+      puts "Your #{@player.currentPokemon.name.upcase} fainted!"
       playerSwitch  
     end
     if !@enemy.currentPokemon.alive?
-      puts "Enemy #{@enemy.currentPokemon.name.capitalize} has fainted!"
+      puts "Enemy #{@enemy.currentPokemon.name.upcase} fainted!"
       @enemy.switch
-      puts "Enemy brings out a #{@enemy.currentPokemon.name.capitalize}!"
+      puts "Enemy sent out #{@enemy.currentPokemon.name.upcase}!"
     end
 
     if !gameWon?
@@ -325,10 +325,10 @@ class Game
       end
     end
     if @player.currentPokemon
-      puts "#{@player.currentPokemon.name.capitalize} returns!"
+      puts "#{@player.currentPokemon.name.upcase} returns!"
     end
     @player.changeCurrent(userInput.to_i-1)
-    puts "#{@player.currentPokemon.name.capitalize} enters the battle!"
+    puts "#{@player.currentPokemon.name.upcase} enters the battle!"
   end
 
   def showPlayerSwitchRoster
@@ -336,7 +336,7 @@ class Game
 
     @player.roster.each_index{|i|
       health = @player.roster[i].alive? ? @player.roster[i].hp.to_s + " HP" : "FAINTED!"
-      text = "#{i+1}. #{@player.roster[i].name.capitalize}"
+      text = "#{i+1}. #{@player.roster[i].name.upcase}"
       until text.length >= maxLength do
         text = text + " "
       end
@@ -368,23 +368,54 @@ class Game
           invalid
         end
       end
-      puts "Your #{@player.currentPokemon.name.capitalize} attacks the enemy #{enemyPokemon.name.capitalize} for #{@player.currentPokemon.attacks(enemyPokemon,@player.currentPokemon.moves[userInput.to_i-1])} damage!"
+      move = @player.currentPokemon.moves[userInput.to_i-1]
+      puts "#{@player.currentPokemon.name.upcase} used #{move.name.split(" (")[0].upcase}!"
+      # binding.pry #OMIT#
+      puts dmgText(@player.currentPokemon.attacks(enemyPokemon,move))
     else 
       #current pokemon is out of PP for all moves, defaults to "Struggle"
       struggle = Move.new("Struggle",40,"Normal",99)
-      puts "Your #{@player.currentPokemon.name.capitalize} is out of moves! It uses Struggle to attack the enemy #{enemyPokemon.name.capitalize} for #{@player.currentPokemon.attacks(enemyPokemon,struggle)} damage!"
+      puts "#{@player.currentPokemon.name.upcase} is out of moves!"
+      puts "#{@player.currentPokemon.name.upcase} used STRUGGLE!"
+      puts dmgText(@player.currentPokemon.attacks(enemyPokemon,struggle))
     end
+  end
+
+  def dmgText(dmgArray)
+    #depending on the number, will evaluate the effectiveness of the attack
+    #returns a string to communicate that effectiveness
+    # binding.pry #OMIT#
+    dmg = dmgArray[0]
+    num = dmgArray[1]
+   
+    if num == 0.5
+      output = "It's not very effective."
+    elsif num == 2
+      output = "It's super-effective!"
+    elsif num == 4
+      output = "Critical hit!"
+    elsif num == 0
+      output = "No effect!"
+    else
+      output = "It hit! "
+    end
+    output + " (#{dmg} dmg)"
   end
 
   def enemyTurn
     puts "###Enemy Turn###"
     if @enemy.currentPokemon.canAttack?
-      puts "Enemy #{@enemy.currentPokemon.name.capitalize} attacks your #{@player.currentPokemon.name.capitalize} for #{@enemy.attacks(@player.currentPokemon,@difficulty)} damage!"
+      attackArray = @enemy.attacks(@player.currentPokemon,@difficulty)
+      puts "#{@enemy.currentPokemon.name.upcase} used #{attackArray[1].name.split(" (")[0].upcase}!"
+      puts dmgText(attackArray[0])
       # puts "Current player pokemon HP is #{@player.currentPokemon.hp}"
     else 
       #current pokemon is out of PP for all moves, defaults to "Struggle"
       struggle = Move.new("Struggle",40,"Normal",99)
-      puts "Enemy #{@enemy.currentPokemon.name.capitalize} is out of moves! It uses Struggle to attack your #{@player.currentPokemon.name.capitalize} for #{@enemy.attacks(@player.currentPokemon, @difficulty, struggle)} damage!"
+      attackArray = @enemy.attacks(@player.currentPokemon, @difficulty, struggle)
+      puts "Enemy #{@enemy.currentPokemon.name.upcase} is out of moves!"
+      puts "Enemy #{@enemy.currentPokemon.name.upcase} used STRUGGLE!"
+      puts dmgText(attackArray[0])
     end
     sepLine
   end
