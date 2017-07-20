@@ -1,3 +1,4 @@
+require "pry"
 require './basePlayer.rb'
 class Enemy < BasePlayer
     def initialize(pokeGroup)
@@ -15,14 +16,15 @@ class Enemy < BasePlayer
         if move
             dmg = @currentPokemon.attacks(oppPokemon, move)
         else
-            if diff == "easy"
+            if diff == "easy" || diff =='e'
                 move = @currentPokemon.usableMoves.sample
                 dmg = @currentPokemon.attacks(oppPokemon, move)
-            elsif diff == "hard"
+            elsif diff == "hard" || diff =="h"
                 move = @currentPokemon.usableMoves.sort{|moveA,moveB| moveA.dmg<=>moveB.dmg}.last
                 dmg = @currentPokemon.attacks(oppPokemon, move)
             end
         end
+        # binding.pry#OMIT
         [dmg, move]
     end
 end

@@ -33,8 +33,8 @@ class Game
     @player = Player.new()
     @pokedex = Pokedex.new()
     #OMIT#
-    @player.roster = @pokedex.bestSix.map{|pokedexPokemon| pokedexPokemon.clone}
-    fillMoves(@player)
+    # @player.roster = @pokedex.bestSix.map{|pokedexPokemon| pokedexPokemon.clone}
+    # fillMoves(@player)
   end
 
   def start
@@ -291,7 +291,10 @@ class Game
 
   def playerTurn
     puts "###Player Turn###"
-    puts "Current Pokemon: #{@player.currentPokemon.name.capitalize} HP:#{@player.currentPokemon.hp}"
+    puts "Current Pokemon: #{@player.currentPokemon.name.upcase} HP:#{@player.currentPokemon.hp}"
+    typeText = @enemy.currentPokemon.type2 != "" ? "#{@enemy.currentPokemon.type1}+#{@enemy.currentPokemon.type1}" : "#{@enemy.currentPokemon.type1}"
+    puts "Enemy Pokemon: #{@enemy.currentPokemon.name.upcase} HP:#{@enemy.currentPokemon.hp} TYPE: #{typeText.upcase}"
+    sepLine
     puts "What would you like to do? (a)ttack (s)witch"
     userInput = ""
     choices = ["a","attack","s","switch"]
@@ -388,12 +391,12 @@ class Game
     dmg = dmgArray[0]
     num = dmgArray[1]
    
-    if num == 0.5
+    if num <= 0.5
       output = "It's not very effective."
     elsif num == 2
       output = "It's super-effective!"
     elsif num == 4
-      output = "Critical hit!"
+      output = "Critical hit!" #Not a true critical hit
     elsif num == 0
       output = "No effect!"
     else
