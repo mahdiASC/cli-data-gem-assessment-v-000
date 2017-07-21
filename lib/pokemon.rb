@@ -1,6 +1,8 @@
 class Pokemon
   attr_accessor :name, :type1, :type2, :hp, :att, :def, :spAtt, :spDef, :spd, :moves
 
+  #Determine proper stats
+  #https://bulbapedia.bulbagarden.net/wiki/Statistic#Hit_Points
   def initialize(arr)
     @name, @type1, @type2, @hp, @att, @def, @spAtt, @spDef, @spd = arr
     @moves = []
@@ -13,20 +15,20 @@ class Pokemon
   def attacks(oppPokemon, move)
     #dmg calculations
     
-    attackStat = ["Normal", "Fighting", "Flying", "Poison", "Ground", "Rock", "Bug", "Ghost"].include?(move.type) ? @att : @spAtt
+    attackStat = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost"].include?(move.type) ? @att : @spAtt
     attackPower = move.dmg
-    defenseStat = ["Normal", "Fighting", "Flying", "Poison", "Ground", "Rock", "Bug", "Ghost"].include?(move.type) ? oppPokemon.def : oppPokemon.spDef
-    randNum = rand(15)+85
+    defenseStat = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost"].include?(move.type) ? oppPokemon.def : oppPokemon.spDef
+    randNum = rand(255-217)+217
     stab = move.type == @type1 || move.type == @type2 ? 1.5 : 1
     weakResist = calcWeakResist(oppPokemon,move)
     #OMIT#
-    # puts "attackStat: #{attackStat}"
-    # puts "attackPower: #{attackPower}"
-    # puts "defenseStat: #{defenseStat}"
-    # puts "randNum: #{randNum}"
-    # puts "stab: #{stab}"
-    # puts "weakResist: #{weakResist}"
-    damageTotal = ((((42 * attackStat.to_f * (attackPower.to_f/defenseStat.to_f))/50)+2)*stab.to_f*weakResist.to_f*randNum.to_f/100).floor
+    puts "attackStat: #{attackStat}"
+    puts "attackPower: #{attackPower}"
+    puts "defenseStat: #{defenseStat}"
+    puts "randNum: #{randNum}"
+    puts "stab: #{stab}"
+    puts "weakResist: #{weakResist}"
+    damageTotal = (((((42 * attackStat.to_f * (attackPower.to_f/defenseStat.to_f))/50)+2)*stab.to_f*weakResist.to_f)*randNum.to_f/255).floor
 
     # Damage applied
     move.pp -= 1
@@ -41,99 +43,99 @@ class Pokemon
     #returns multiplier for attack effectiveness
     #0.25, 0.5, 1, 2, or 4
     # http://unrealitymag.com/wp-content/uploads/2014/11/rby-rules.jpg
-    type = typeInput || oppPokemon.type1
-    puts type
+    type = (typeInput || oppPokemon.type1).downcase
+    puts type.downcase
     output = 1; #number returned as modifier
-    case move.type
-    when 'Normal'
-      if ['Ghost'].include?(type)
+    case move.type.downcase
+    when 'normal'
+      if ['ghost'].include?(type)
         output *= 0
       end
-    when 'Bug'
-      if ['Fire','Flying',"Rock"].include?(type)
+    when 'bug'
+      if ['fire','flying',"rock"].include?(type)
         output*=0.5
-      elsif ['Grass','Poison',"Psychic"].include?(type)
+      elsif ['grass','poison',"psychic"].include?(type)
         output*=2
       end
-    when 'Dragon'
+    when 'dragon'
       #No effectiveness
-    when 'Ice'
-      if ['Ice','Water'].include?(type)
+    when 'ice'
+      if ['ice','water'].include?(type)
         output*=0.5
-      elsif ['Dragon','Flying','Grass','Ground'].include?(type)
+      elsif ['dragon','flying','grass','ground'].include?(type)
         output*=2
       end
-    when 'Fighting'
-      if ['Flying','Psychic'].include?(type)
+    when 'fighting'
+      if ['flying','psychic'].include?(type)
         output*=0.5
-      elsif ['Ice','Normal','Rock'].include?(type)
+      elsif ['ice','normal','rock'].include?(type)
         output*=2
-      elsif ['Ghost'].include?(type)
+      elsif ['ghost'].include?(type)
         output*=0
       end
-    when 'Fire'
-      if ['Rock','Water'].include?(type)
+    when 'fire'
+      if ['rock','water'].include?(type)
         output*=0.5
-      elsif ['Bug','Grass','Ice'].include?(type)
+      elsif ['bug','grass','ice'].include?(type)
         output*=2
       end
-    when 'Flying'
-      if ['Electric','Rock'].include?(type)
+    when 'flying'
+      if ['electric','rock'].include?(type)
         output*=0.5
-      elsif ['Bug','Fighting',"Grass"].include?(type)
+      elsif ['bug','fighting',"grass"].include?(type)
         output*=2
       end
-    when 'Grass'
-      if ['Bug','Fire','Flying','Grass','Poison'].include?(type)
+    when 'grass'
+      if ['bug','fire','flying','grass','poison'].include?(type)
         output*=0.5
-      elsif ['Ground','Rock','Water'].include?(type)
+      elsif ['ground','rock','water'].include?(type)
         output*=2
       end
-    when 'Ghost'
-      if ['Normal','Psychic'].include?(type)
+    when 'ghost'
+      if ['normal','psychic'].include?(type)
         output*=0
       end
-    when 'Ground'
-      if ['Grass'].include?(type)
+    when 'ground'
+      if ['grass'].include?(type)
         output*=0.5
-      elsif ['Electric','Fire','Poison','Rock'].include?(type)
+      elsif ['electric','fire','poison','rock'].include?(type)
         output*=2
-      elsif ['Flying'].include?(type)
+      elsif ['flying'].include?(type)
         output*=0
       end
-    when 'Electric'
-      if ['Electric','Grass'].include?(type)
+    when 'electric'
+      if ['electric','grass'].include?(type)
         output*=0.5
-      elsif ['Flying','Water'].include?(type)
+      elsif ['flying','water'].include?(type)
         output*=2
-      elsif ['Ground'].include?(type)
+      elsif ['ground'].include?(type)
         output*=0
       end
-    when 'Poison'
-      if ['Ground','Poison','Rock'].include?(type)
+    when 'poison'
+      if ['ground','poison','rock'].include?(type)
         output*=0.5
-      elsif ['Bug','Grass'].include?(type)
+      elsif ['bug','grass'].include?(type)
         output*=2
       end
-    when 'Psychic'
-      if ['Psychic'].include?(type)
+    when 'psychic'
+      if ['psychic'].include?(type)
         output*=0.5
-      elsif ['Fighting','Poison'].include?(type)
+      elsif ['fighting','poison'].include?(type)
         output*=2
       end
-    when 'Rock'
-      if ['Fighting','Rock'].include?(type)
-      elsif ['Bug','Fire','Flying','Ice'].include?(type)
+    when 'rock'
+      if ['fighting','rock'].include?(type)
+      elsif ['bug','fire','flying','ice'].include?(type)
       end
-    when 'Water'
-      if ['Grass','Ice'].include?(type)
+    when 'water'
+      if ['grass','ice'].include?(type)
         output*=0.5
-      elsif ['Fire','Ground','Rock'].include?(type)
+      elsif ['fire','ground','rock'].include?(type)
         output*=2
       end
     else
       puts "SOMETHING WENT WRONG WITH TYPE DMG"
-      puts "Move: #{move} Type: #{type}"
+      puts "MoveType: #{move.type.downcase} Type: #{type.downcase}"
     end
     
 

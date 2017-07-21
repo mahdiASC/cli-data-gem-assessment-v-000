@@ -223,11 +223,12 @@ class Game
     puts title + " || Enemy"
     sepLine
     @player.roster.each_index{|i|
-      text = @player.roster[i].name.capitalize
+      text = @player.roster[i].name.upcase
       until text.length >= maxLength do
         text = " " + text
       end
-      text = text + " || " + @enemy.roster.reverse[i].name.capitalize
+      typeText = @enemy.roster[i].type2!="" ? " (#{@enemy.roster[i].type1.capitalize}+#{@enemy.roster[i].type2.capitalize})" : " (#{@enemy.roster[i].type1.capitalize})"
+      text = text + " || " + @enemy.roster[i].name.upcase + typeText
       puts text
     }
 
@@ -276,12 +277,16 @@ class Game
     #switch if any dead and player still has usable pokemon
     if !@player.currentPokemon.alive?
       puts "Your #{@player.currentPokemon.name.upcase} fainted!"
-      playerSwitch  
+      if !@player.allDead?
+        playerSwitch
+      end
     end
     if !@enemy.currentPokemon.alive?
       puts "Enemy #{@enemy.currentPokemon.name.upcase} fainted!"
-      @enemy.switch
-      puts "Enemy sent out #{@enemy.currentPokemon.name.upcase}!"
+      if !@enemy.allDead?
+        @enemy.switch
+        puts "Enemy sent out #{@enemy.currentPokemon.name.upcase}!"
+      end
     end
 
     if !gameWon?
@@ -291,7 +296,8 @@ class Game
 
   def playerTurn
     puts "###Your Turn###"
-    puts "Current Pokemon: #{@player.currentPokemon.name.upcase} HP:#{@player.currentPokemon.hp}"
+    typeText = @player.currentPokemon.type2 != "" ? "#{@player.currentPokemon.type1}+#{@player.currentPokemon.type2}" : "#{@player.currentPokemon.type1}"
+    puts "Current Pokemon: #{@player.currentPokemon.name.upcase} HP:#{@player.currentPokemon.hp} TYPE: #{typeText.upcase}"
     typeText = @enemy.currentPokemon.type2 != "" ? "#{@enemy.currentPokemon.type1}+#{@enemy.currentPokemon.type2}" : "#{@enemy.currentPokemon.type1}"
     puts "Enemy Pokemon: #{@enemy.currentPokemon.name.upcase} HP:#{@enemy.currentPokemon.hp} TYPE: #{typeText.upcase}"
     sepLine
@@ -343,7 +349,7 @@ class Game
       until text.length >= maxLength do
         text = text + " "
       end
-      puts "#{text}| STATUS: #{health}"
+      puts "#{text}| STATUS: #{health} spAtt1:#{@player.roster[i].moves[2].name.match(/(?<=\().*(?=\))/)[0].upcase}/PP #{@player.roster[i].moves[2].pp}  spAtt2:#{@player.roster[i].moves[3].name.match(/(?<=\().*(?=\))/)[0].upcase}/PP #{@player.roster[i].moves[3].pp}"
     }
     sepLine
   end
