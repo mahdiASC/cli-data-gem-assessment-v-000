@@ -33,8 +33,8 @@ class Game
     @player = Player.new()
     @pokedex = Pokedex.new()
     #OMIT#
-    # @player.roster = @pokedex.bestSix.map{|pokedexPokemon| pokedexPokemon.clone}
-    # fillMoves(@player)
+    @player.roster = @pokedex.bestSix.map{|pokedexPokemon| pokedexPokemon.clone}
+    fillMoves(@player)
   end
 
   def start
@@ -290,9 +290,9 @@ class Game
   end
 
   def playerTurn
-    puts "###Player Turn###"
+    puts "###Your Turn###"
     puts "Current Pokemon: #{@player.currentPokemon.name.upcase} HP:#{@player.currentPokemon.hp}"
-    typeText = @enemy.currentPokemon.type2 != "" ? "#{@enemy.currentPokemon.type1}+#{@enemy.currentPokemon.type1}" : "#{@enemy.currentPokemon.type1}"
+    typeText = @enemy.currentPokemon.type2 != "" ? "#{@enemy.currentPokemon.type1}+#{@enemy.currentPokemon.type2}" : "#{@enemy.currentPokemon.type1}"
     puts "Enemy Pokemon: #{@enemy.currentPokemon.name.upcase} HP:#{@enemy.currentPokemon.hp} TYPE: #{typeText.upcase}"
     sepLine
     puts "What would you like to do? (a)ttack (s)witch"
@@ -372,14 +372,14 @@ class Game
         end
       end
       move = @player.currentPokemon.moves[userInput.to_i-1]
-      puts "#{@player.currentPokemon.name.upcase} used #{move.name.split(" (")[0].upcase}!"
+      puts "#{@player.currentPokemon.name.upcase} used #{move.name.split(" (")[0].upcase} (#{move.type})!"
       # binding.pry #OMIT#
       puts dmgText(@player.currentPokemon.attacks(enemyPokemon,move))
     else 
       #current pokemon is out of PP for all moves, defaults to "Struggle"
       struggle = Move.new("Struggle",40,"Normal",99)
       puts "#{@player.currentPokemon.name.upcase} is out of moves!"
-      puts "#{@player.currentPokemon.name.upcase} used STRUGGLE!"
+      puts "#{@player.currentPokemon.name.upcase} used STRUGGLE! #{struggle.type}"
       puts dmgText(@player.currentPokemon.attacks(enemyPokemon,struggle))
     end
   end
@@ -409,7 +409,7 @@ class Game
     puts "###Enemy Turn###"
     if @enemy.currentPokemon.canAttack?
       attackArray = @enemy.attacks(@player.currentPokemon,@difficulty)
-      puts "#{@enemy.currentPokemon.name.upcase} used #{attackArray[1].name.split(" (")[0].upcase}!"
+      puts "#{@enemy.currentPokemon.name.upcase} used #{attackArray[1].name.split(" (")[0].upcase}  (#{attackArray[1].type})!"
       puts dmgText(attackArray[0])
       # puts "Current player pokemon HP is #{@player.currentPokemon.hp}"
     else 
@@ -417,7 +417,7 @@ class Game
       struggle = Move.new("Struggle",40,"Normal",99)
       attackArray = @enemy.attacks(@player.currentPokemon, @difficulty, struggle)
       puts "Enemy #{@enemy.currentPokemon.name.upcase} is out of moves!"
-      puts "Enemy #{@enemy.currentPokemon.name.upcase} used STRUGGLE!"
+      puts "Enemy #{@enemy.currentPokemon.name.upcase} used STRUGGLE #{struggle.type}!"
       puts dmgText(attackArray[0])
     end
     sepLine

@@ -12,14 +12,21 @@ class Pokemon
 
   def attacks(oppPokemon, move)
     #dmg calculations
+    
     attackStat = ["Normal", "Fighting", "Flying", "Poison", "Ground", "Rock", "Bug", "Ghost"].include?(move.type) ? @att : @spAtt
     attackPower = move.dmg
     defenseStat = ["Normal", "Fighting", "Flying", "Poison", "Ground", "Rock", "Bug", "Ghost"].include?(move.type) ? oppPokemon.def : oppPokemon.spDef
     randNum = rand(15)+85
     stab = move.type == @type1 || move.type == @type2 ? 1.5 : 1
     weakResist = calcWeakResist(oppPokemon,move)
-
-    damageTotal = ((((42 * attackStat * (attackPower/defenseStat))/50)+2)*stab*weakResist*randNum/100).ceil
+    #OMIT#
+    # puts "attackStat: #{attackStat}"
+    # puts "attackPower: #{attackPower}"
+    # puts "defenseStat: #{defenseStat}"
+    # puts "randNum: #{randNum}"
+    # puts "stab: #{stab}"
+    # puts "weakResist: #{weakResist}"
+    damageTotal = ((((42 * attackStat.to_f * (attackPower.to_f/defenseStat.to_f))/50)+2)*stab.to_f*weakResist.to_f*randNum.to_f/100).floor
 
     # Damage applied
     move.pp -= 1
@@ -34,7 +41,8 @@ class Pokemon
     #returns multiplier for attack effectiveness
     #0.25, 0.5, 1, 2, or 4
     # http://unrealitymag.com/wp-content/uploads/2014/11/rby-rules.jpg
-    type = typeInput || @type1
+    type = typeInput || oppPokemon.type1
+    puts type
     output = 1; #number returned as modifier
     case move.type
     when 'Normal'
@@ -128,8 +136,14 @@ class Pokemon
       puts "Move: #{move} Type: #{type}"
     end
     
-    if(typeInput.nil? && @type2 !="")
-      output *= calcWeakResist(oppPokemon,move, @type2)
+
+
+    if(typeInput.nil? && oppPokemon.type2 !="")
+      output *= calcWeakResist(oppPokemon,move, oppPokemon.type2)
+    end
+    #OMIT#
+    if output ==0
+      puts "WARNING, OUTPUT IS 0!"
     end
     output
   end
