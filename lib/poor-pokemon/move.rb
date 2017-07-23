@@ -1,7 +1,4 @@
-# Damage Calculation
-# https://www.serebii.net/games/damage.shtml
-
-class Move
+class PoorPokemon::Move
   attr_accessor :name, :dmg, :type, :pp
 
   def initialize (name, dmg, type, pp)

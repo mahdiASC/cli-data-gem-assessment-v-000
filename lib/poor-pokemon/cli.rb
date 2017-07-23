@@ -1,18 +1,9 @@
-# Contains game logic
-require_relative "pokedex.rb"
-require_relative "enemy.rb"
-require_relative "player.rb"
-require_relative 'move.rb'
-
 class PoorPokemon::CLI
   attr_accessor :player, :enemy, :pokedex, :difficulty
 
   def initialize
-    @player = Player.new()
-    @pokedex = Pokedex.new()
-    #OMIT#
-    # @player.roster = @pokedex.bestSix.map{|pokedexPokemon| pokedexPokemon.clone}
-    # fillMoves(@player)
+    @player = PoorPokemon::Player.new()
+    @pokedex = PoorPokemon::Pokedex.new()
   end
 
   def call
@@ -45,10 +36,10 @@ class PoorPokemon::CLI
     end
     @difficulty = userInput
     if userInput == "e" || userInput == "easy"
-      @enemy = Enemy.new(@pokedex.randSix(true))
+      @enemy = PoorPokemon::Enemy.new(@pokedex.randSix(true))
       fillMoves(@enemy, "easy")
     elsif userInput == "h" || userInput == "hard"
-      @enemy = Enemy.new(@pokedex.bestSix(true))
+      @enemy = PoorPokemon::Enemy.new(@pokedex.bestSix(true))
       fillMoves(@enemy, "hard")
     end
   end
@@ -59,29 +50,29 @@ class PoorPokemon::CLI
     if char.is_a?(Player)
       char.roster.each{|pokemon|
         output = []
-        output.push(Move.new("Normal Attack",randAtt(45),"Normal",30))
-        output.push(Move.new("Big Normal Attack",randAtt(110),"Normal",10))
-        output.push(Move.new("Special Attack",randAtt(70),randType,20))
-        output.push(Move.new("Big Special Attack",randAtt(100),randType,5))
+        output.push(PoorPokemon::Move.new("Normal Attack",randAtt(45),"Normal",30))
+        output.push(PoorPokemon::Move.new("Big Normal Attack",randAtt(110),"Normal",10))
+        output.push(PoorPokemon::Move.new("Special Attack",randAtt(70),randType,20))
+        output.push(PoorPokemon::Move.new("Big Special Attack",randAtt(100),randType,5))
         pokemon.moves = output
       }
     else
       if diff == "easy"
         char.roster.each{|pokemon|
           output = []
-          output.push(Move.new("Normal Attack",randAtt(45),"Normal",30))
-          output.push(Move.new("Big Normal Attack",randAtt(110),"Normal",10))
-          output.push(Move.new("Special Attack",randAtt(70),randType,20))
-          output.push(Move.new("Big Special Attack",randAtt(100),randType,5))
+          output.push(PoorPokemon::Move.new("Normal Attack",randAtt(45),"Normal",30))
+          output.push(PoorPokemon::Move.new("Big Normal Attack",randAtt(110),"Normal",10))
+          output.push(PoorPokemon::Move.new("Special Attack",randAtt(70),randType,20))
+          output.push(PoorPokemon::Move.new("Big Special Attack",randAtt(100),randType,5))
           pokemon.moves = output
         }
       elsif diff == "hard"
         char.roster.each{|pokemon|
           output=[]
-          output.push(Move.new("Normal Attack",40,"Normal",30))
-          output.push(Move.new("Big Normal Attack",100,"Normal",10))
-          output.push(Move.new("Special Attack",65,pokemon.type1,20))
-          output.push(Move.new("Big Special Attack",90,pokemon.type1,5))
+          output.push(PoorPokemon::Move.new("Normal Attack",40,"Normal",30))
+          output.push(PoorPokemon::Move.new("Big Normal Attack",100,"Normal",10))
+          output.push(PoorPokemon::Move.new("Special Attack",65,pokemon.type1,20))
+          output.push(PoorPokemon::Move.new("Big Special Attack",90,pokemon.type1,5))
           pokemon.moves = output
         }
       end
@@ -127,7 +118,6 @@ class PoorPokemon::CLI
   
   def showPlayerRoster
     puts "YOUR ROSTER:"
-    # binding.pry #OMIT#
     if @player.roster.length>0
       @player.roster.each_index{|i|
         puts "#{i+1}. #{@player.roster[i].name.capitalize}"
@@ -223,7 +213,6 @@ class PoorPokemon::CLI
   def turnOrder
     #decides turn order based on each player's current pokemon's speed
     #in event of tie, random
-    # binding.pry #OMIT#
     if @player.currentPokemon.spd == @enemy.currentPokemon.spd
       if rand()>0.5
         playerTurn
@@ -237,17 +226,13 @@ class PoorPokemon::CLI
         end
       end
     elsif @player.currentPokemon.spd>@enemy.currentPokemon.spd
-      # puts "Player going first"
       playerTurn
       if @enemy.currentPokemon.alive?
-        # puts "Enemy going first"
         enemyTurn
       end
     elsif @player.currentPokemon.spd<@enemy.currentPokemon.spd
-      # puts "Enemy going first"
       enemyTurn
       if @player.currentPokemon.alive?
-        # puts "Player going second"
         playerTurn
       end
     end
@@ -342,7 +327,6 @@ class PoorPokemon::CLI
     if @player.currentPokemon.canAttack?
       userInput = "0"
       availMoves = @player.currentPokemon.usableMoves
-      # binding.pry #OMIT#
       until availMoves.include?(@player.currentPokemon.moves[userInput.to_i-1]) && userInput!="0" do
         puts "Which move should #{@player.currentPokemon.name.capitalize} use?"
         maxLength = @player.currentPokemon.moves.sort{|a,b| a.name.length<=>b.name.length}.last.name.length+5
@@ -361,11 +345,10 @@ class PoorPokemon::CLI
       end
       move = @player.currentPokemon.moves[userInput.to_i-1]
       puts "#{@player.currentPokemon.name.upcase} used #{move.name.split(" (")[0].upcase} (#{move.type})!"
-      # binding.pry #OMIT#
       puts dmgText(@player.currentPokemon.attacks(enemyPokemon,move))
     else 
       #current pokemon is out of PP for all moves, defaults to "Struggle"
-      struggle = Move.new("Struggle",40,"Normal",99)
+      struggle = PoorPokemon::Move.new("Struggle",40,"Normal",99)
       puts "#{@player.currentPokemon.name.upcase} is out of moves!"
       puts "#{@player.currentPokemon.name.upcase} used STRUGGLE! #{struggle.type}"
       puts dmgText(@player.currentPokemon.attacks(enemyPokemon,struggle))
@@ -375,7 +358,6 @@ class PoorPokemon::CLI
   def dmgText(dmgArray)
     #depending on the number, will evaluate the effectiveness of the attack
     #returns a string to communicate that effectiveness
-    # binding.pry #OMIT#
     dmg = dmgArray[0]
     num = dmgArray[1]
    
@@ -399,10 +381,9 @@ class PoorPokemon::CLI
       attackArray = @enemy.attacks(@player.currentPokemon,@difficulty)
       puts "#{@enemy.currentPokemon.name.upcase} used #{attackArray[1].name.split(" (")[0].upcase}  (#{attackArray[1].type})!"
       puts dmgText(attackArray[0])
-      # puts "Current player pokemon HP is #{@player.currentPokemon.hp}"
     else 
       #current pokemon is out of PP for all moves, defaults to "Struggle"
-      struggle = Move.new("Struggle",40,"Normal",99)
+      struggle = PoorPokemon::Move.new("Struggle",40,"Normal",99)
       attackArray = @enemy.attacks(@player.currentPokemon, @difficulty, struggle)
       puts "Enemy #{@enemy.currentPokemon.name.upcase} is out of moves!"
       puts "Enemy #{@enemy.currentPokemon.name.upcase} used STRUGGLE #{struggle.type}!"

@@ -1,5 +1,4 @@
-require './basePlayer.rb'
-class Player < BasePlayer
+class PoorPokemon::Player < PoorPokemon::BasePlayer
     def initialize
         @roster = []
     end

@@ -1,4 +1,4 @@
-class BasePlayer
+class PoorPokemon::BasePlayer
     attr_accessor :roster, :currentPokemon
 
     def allDead?

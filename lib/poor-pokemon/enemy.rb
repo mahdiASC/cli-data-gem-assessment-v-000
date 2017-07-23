@@ -1,6 +1,4 @@
-require "pry"
-require './basePlayer.rb'
-class Enemy < BasePlayer
+class PoorPokemon::Enemy < PoorPokemon::BasePlayer
     def initialize(pokeGroup)
         @roster = pokeGroup
         @currentPokemon = @roster[0]
@@ -24,7 +22,6 @@ class Enemy < BasePlayer
                 dmg = @currentPokemon.attacks(oppPokemon, move)
             end
         end
-        # binding.pry#OMIT
         [dmg, move]
     end
 end

@@ -1,5 +1,4 @@
-require './pokemon.rb'
-class PokedexPokemon
+class PoorPokemon::PokedexPokemon
   attr_accessor :name, :num, :type1, :type2, :hp, :att, :def, :spAtt, :spDef, :spd, :totalStats
 
   def initialize(arr)

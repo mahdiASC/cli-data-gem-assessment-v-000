@@ -1,4 +1,4 @@
-class Pokemon
+class PoorPokemon::Pokemon
   attr_accessor :name, :type1, :type2, :hp, :att, :def, :spAtt, :spDef, :spd, :moves
 
 
@@ -6,7 +6,7 @@ class Pokemon
     #flag is for enemy to have perfect stats
     @name, @type1, @type2, @hp, @att, @def, @spAtt, @spDef, @spd = arr
 
-    #Determine proper stats
+    #Determines proper stats
     #https://www.dragonflycave.com/mechanics/stats
     #Individual stats (0-15)
     atkIV = flag ? 15: rand(15)
@@ -55,23 +55,17 @@ class Pokemon
 
   def attacks(oppPokemon, move)
     #dmg calculations
-    
     attackStat = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost"].include?(move.type) ? @att : @spAtt
     attackPower = move.dmg
     defenseStat = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost"].include?(move.type) ? oppPokemon.def : oppPokemon.spDef
     randNum = rand(255-217)+217
     stab = move.type == @type1 || move.type == @type2 ? 1.5 : 1
     weakResist = calcWeakResist(oppPokemon,move)
-    #OMIT#
-    # puts "attackStat: #{attackStat}"
-    # puts "attackPower: #{attackPower}"
-    # puts "defenseStat: #{defenseStat}"
-    # puts "randNum: #{randNum}"
-    # puts "stab: #{stab}"
-    # puts "weakResist: #{weakResist}"
+
+    #dmg equation
     damageTotal = (((((42 * attackStat.to_f * (attackPower.to_f/defenseStat.to_f))/50)+2)*stab.to_f*weakResist.to_f)*randNum.to_f/255).floor
 
-    # Damage applied
+    #applying dmg
     move.pp -= 1
     oppPokemon.hp -= damageTotal
     if oppPokemon.hp < 0
@@ -177,16 +171,10 @@ class Pokemon
       puts "SOMETHING WENT WRONG WITH TYPE DMG"
       puts "MoveType: #{move.type.downcase} Type: #{type.downcase}"
     end
-    
-
 
     if(typeInput.nil? && oppPokemon.type2 !="")
       output *= calcWeakResist(oppPokemon,move, oppPokemon.type2)
     end
-    #OMIT#
-    # if output ==0
-    #   puts "WARNING, OUTPUT IS 0!"
-    # end
     output
   end
 

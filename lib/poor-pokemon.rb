@@ -3,4 +3,4 @@ require 'nokogiri'
 
 require_relative "poor-pokemon/cli"
 
-PoorPokemon::CLI.new.start
+PoorPokemon::CLI.new.call
