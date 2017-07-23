@@ -1,43 +1,21 @@
 # Contains game logic
+require_relative "pokedex.rb"
+require_relative "enemy.rb"
+require_relative "player.rb"
+require_relative 'move.rb'
 
-# Pokedex selection
-# Option to just fill roster of 6
-
-# Pokemon from pokedex will be given standard move set and random special
-
-# To Do
-# Add player choices
-# Add dmg equation
-# Make searched pokedex item to addable to roster
-# Add local leaderboard
-# REPLACE local URL in "pokedex.rb"
-
-####Game logic###
-# Game explained with puts
-# Player starts with empty roster 
-# Until Player has 6 pokemon in roster:
-#   Player selects a pokedexPokemon, which are cloned into Player's roster
-# Game starts with introduction to enemy team (standard)
-
-require "pry"
-
-require "./pokedex.rb"
-require "./enemy.rb"
-require "./player.rb"
-require './move.rb'
-
-class Game
+class PoorPokemon::CLI
   attr_accessor :player, :enemy, :pokedex, :difficulty
 
   def initialize
     @player = Player.new()
     @pokedex = Pokedex.new()
     #OMIT#
-    @player.roster = @pokedex.bestSix.map{|pokedexPokemon| pokedexPokemon.clone}
-    fillMoves(@player)
+    # @player.roster = @pokedex.bestSix.map{|pokedexPokemon| pokedexPokemon.clone}
+    # fillMoves(@player)
   end
 
-  def start
+  def call
     intro
     difficulty
     pokedexSelection
@@ -454,7 +432,7 @@ class Game
     end
 
     if(userInput == "y" || userInput == "yes")
-      start
+      call
     end
   end
 end

@@ -7,8 +7,8 @@ class Pokedex
   def initialize
   # Pokemon database
   # http://pokedream.com/pokedex/pokemon?display=gen1
-    pokemonDoc = Nokogiri::HTML(open("http://pokedream.com/pokedex/pokemon?display=gen1"))
-    # pokemonDoc = Nokogiri::HTML(open("C:/Users/Jordan Brodie/Desktop/Pokedex __ PokeDream.html"))
+    # pokemonDoc = Nokogiri::HTML(open("http://pokedream.com/pokedex/pokemon?display=gen1"))
+    
     @pokeList = pokemonDoc.css(".UILinkedTableRow").map{ |row|
       rowData = row.children().map{ |col|
         if col.attribute("class")
