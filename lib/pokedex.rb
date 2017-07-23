@@ -23,14 +23,16 @@ class Pokedex
     }
   end
 
-  def bestSix
-    @pokeList.sort{|pokemonA,pokemonB| pokemonB.totalStats <=> pokemonA.totalStats}.take(6).map{|pokemon|pokemon.clone}
+  def bestSix(flag=false)
+    #flag is for enemy to have perfect stats
+    @pokeList.sort{|pokemonA,pokemonB| pokemonB.totalStats <=> pokemonA.totalStats}.take(6).map{|pokemon|pokemon.clone(flag)}
   end
 
-  def randSix
+  def randSix(flag=false)
+    #flag is for enemy to have perfect stats
     randArray = []
     6.times do
-      randArray.push(@pokeList.sample.clone)
+      randArray.push(@pokeList.sample.clone(flag))
     end
     randArray
   end

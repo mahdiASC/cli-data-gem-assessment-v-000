@@ -67,10 +67,10 @@ class Game
     end
     @difficulty = userInput
     if userInput == "e" || userInput == "easy"
-      @enemy = Enemy.new(@pokedex.randSix)
+      @enemy = Enemy.new(@pokedex.randSix(true))
       fillMoves(@enemy, "easy")
     elsif userInput == "h" || userInput == "hard"
-      @enemy = Enemy.new(@pokedex.bestSix)
+      @enemy = Enemy.new(@pokedex.bestSix(true))
       fillMoves(@enemy, "hard")
     end
   end
@@ -349,7 +349,11 @@ class Game
       until text.length >= maxLength do
         text = text + " "
       end
-      puts "#{text}| STATUS: #{health} spAtt1:#{@player.roster[i].moves[2].name.match(/(?<=\().*(?=\))/)[0].upcase}/PP #{@player.roster[i].moves[2].pp}  spAtt2:#{@player.roster[i].moves[3].name.match(/(?<=\().*(?=\))/)[0].upcase}/PP #{@player.roster[i].moves[3].pp}"
+      if health !="FAINTED!"
+        puts "#{text}| STATUS: #{health} spAtt1:#{@player.roster[i].moves[2].name.match(/(?<=\().*(?=\))/)[0].upcase}/PP #{@player.roster[i].moves[2].pp}  spAtt2:#{@player.roster[i].moves[3].name.match(/(?<=\().*(?=\))/)[0].upcase}/PP #{@player.roster[i].moves[3].pp}"
+      else
+        puts "#{text}| STATUS: #{health}"
+      end
     }
     sepLine
   end
@@ -397,16 +401,16 @@ class Game
     dmg = dmgArray[0]
     num = dmgArray[1]
    
-    if num <= 0.5
+    if num == 0
+      output = "No effect!"
+    elsif num == 0.5 || num == 0.25
       output = "It's not very effective."
     elsif num == 2
       output = "It's super-effective!"
     elsif num == 4
       output = "Critical hit!" #Not a true critical hit
-    elsif num == 0
-      output = "No effect!"
     else
-      output = "It hit! "
+      output = "It hit!"
     end
     output + " (#{dmg} dmg)"
   end

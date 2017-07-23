@@ -1,10 +1,51 @@
 class Pokemon
   attr_accessor :name, :type1, :type2, :hp, :att, :def, :spAtt, :spDef, :spd, :moves
 
-  #Determine proper stats
-  #https://bulbapedia.bulbagarden.net/wiki/Statistic#Hit_Points
-  def initialize(arr)
+
+  def initialize(arr, flag=false)
+    #flag is for enemy to have perfect stats
     @name, @type1, @type2, @hp, @att, @def, @spAtt, @spDef, @spd = arr
+
+    #Determine proper stats
+    #https://www.dragonflycave.com/mechanics/stats
+    #Individual stats (0-15)
+    atkIV = flag ? 15: rand(15)
+    @att += atkIV
+    @att = @att*2+68
+    
+
+    defIV = flag ? 15:rand(15)
+    @def += defIV
+    @def = @def*2+68
+
+    spdIV = flag ? 15:rand(15)
+    @spd += spdIV
+    @spd = @spd*2+68
+
+    spIV = flag ? 15:rand(15)
+    @spAtt += spIV
+    @spAtt = @spAtt*2+68
+    @spDef += spIV
+    @spDef = @spDef*2+68
+
+    #how HP and IV are connected
+    if atkIV%2==1
+      @hp +=  8
+    end
+    
+    if defIV%2==1
+      @hp +=  4
+    end
+    
+    if spdIV%2==1
+      @hp +=  2
+    end
+    
+    if spIV%2==1
+      @hp +=  1
+    end
+    @hp = @hp*2+110
+
     @moves = []
   end
 
@@ -22,12 +63,12 @@ class Pokemon
     stab = move.type == @type1 || move.type == @type2 ? 1.5 : 1
     weakResist = calcWeakResist(oppPokemon,move)
     #OMIT#
-    puts "attackStat: #{attackStat}"
-    puts "attackPower: #{attackPower}"
-    puts "defenseStat: #{defenseStat}"
-    puts "randNum: #{randNum}"
-    puts "stab: #{stab}"
-    puts "weakResist: #{weakResist}"
+    # puts "attackStat: #{attackStat}"
+    # puts "attackPower: #{attackPower}"
+    # puts "defenseStat: #{defenseStat}"
+    # puts "randNum: #{randNum}"
+    # puts "stab: #{stab}"
+    # puts "weakResist: #{weakResist}"
     damageTotal = (((((42 * attackStat.to_f * (attackPower.to_f/defenseStat.to_f))/50)+2)*stab.to_f*weakResist.to_f)*randNum.to_f/255).floor
 
     # Damage applied
@@ -44,7 +85,6 @@ class Pokemon
     #0.25, 0.5, 1, 2, or 4
     # http://unrealitymag.com/wp-content/uploads/2014/11/rby-rules.jpg
     type = (typeInput || oppPokemon.type1).downcase
-    puts type.downcase
     output = 1; #number returned as modifier
     case move.type.downcase
     when 'normal'
@@ -144,9 +184,9 @@ class Pokemon
       output *= calcWeakResist(oppPokemon,move, oppPokemon.type2)
     end
     #OMIT#
-    if output ==0
-      puts "WARNING, OUTPUT IS 0!"
-    end
+    # if output ==0
+    #   puts "WARNING, OUTPUT IS 0!"
+    # end
     output
   end
 
