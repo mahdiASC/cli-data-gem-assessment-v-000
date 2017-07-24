@@ -1,6 +1,5 @@
-require 'open-uri'
-require 'nokogiri'
+require_relative '../config/environment'
 
-require_relative "poor-pokemon/cli"
-
-PoorPokemon::CLI.new.call
+#Not sure what this module is for, but its everywhere -.-
+module PoorPokemon
+end
