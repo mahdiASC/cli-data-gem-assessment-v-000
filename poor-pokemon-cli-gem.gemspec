@@ -9,7 +9,8 @@ Gem::Specification.new do |spec|
   spec.description   = "A simple pokemon CLI"
   spec.summary       = "In this simple CLI gem game, the player selects whatever pokemon they want from their pokedex to be added to their roster of 6, and then battles against an opponent, \"Poorly Designed Boss\"."
   spec.version       = PoorPokemon::VERSION
-
+  spec.homepage      = 'https://github.com/mahdiASC/cli-data-gem-assessment-v-000'
+  spec.date          = Time.now.utc.strftime("%Y-%m-%d")
   spec.files         = `git ls-files`.split($\)
   spec.executables   = ["poor-pokemon"]
   spec.name          = "poor-pokemon-cli"

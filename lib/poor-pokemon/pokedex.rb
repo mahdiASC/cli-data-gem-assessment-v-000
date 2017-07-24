@@ -14,7 +14,7 @@ class PoorPokemon::Pokedex
       }.reject{|val| val == "\n" || val == "---"}
       rowData
     }.map{|row|
-      PokedexPokemon.new(row)
+      PoorPokemon::PokedexPokemon.new(row)
     }
   end
 

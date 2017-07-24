@@ -47,7 +47,7 @@ class PoorPokemon::CLI
   def fillMoves(char, diff=nil)
     #fills char's pokemon roster with appropriate moves
     #moves are different for enemy
-    if char.is_a?(Player)
+    if char.is_a?(PoorPokemon::Player)
       char.roster.each{|pokemon|
         output = []
         output.push(PoorPokemon::Move.new("Normal Attack",randAtt(45),"Normal",30))
@@ -57,6 +57,7 @@ class PoorPokemon::CLI
         pokemon.moves = output
       }
     else
+      #Enemy player
       if diff == "easy"
         char.roster.each{|pokemon|
           output = []
@@ -394,8 +395,10 @@ class PoorPokemon::CLI
 
   def currentStatus
     #prints current status for both sides
-    puts "Your #{@player.currentPokemon.name.capitalize} has #{@player.currentPokemon.hp} HP"
-    puts "Enemy #{@enemy.currentPokemon.name.capitalize} has #{@enemy.currentPokemon.hp} HP"
+    sepLine
+    puts "###CURRENT STATUS###"
+    puts "Your #{@player.currentPokemon.name.upcase} has #{@player.currentPokemon.hp} HP"
+    puts "Enemy #{@enemy.currentPokemon.name.upcase} has #{@enemy.currentPokemon.hp} HP"
     sepLine
   end
 
