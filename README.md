@@ -21,3 +21,4 @@ The gem is available as open source under the terms of the [MIT License](http://
 
 ##To-Do List
 Add tests (Rake)
+Add case-insensitive searching
